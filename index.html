@@ -47,13 +47,13 @@
 				var _node = nodeFactory(el);
 				var _servers, _services = false;
 				this.node = _node;
+				$('#search-input').val('');
 
 				//get new data
 				if(_node.type=='service')
 					_servers = data.services[_node.id].servers;
 				else if(_node.type=='server')
 					_services = data.servers[_node.id].services;
-				console.log(_servers);
 
 				//setting server carousel
 				if(_servers){
@@ -72,7 +72,41 @@
 				return this;
 			}
 
-			nodeFactory = function(el){
+			this.reset = function(){
+		    	$('#server-list li').show();
+		    	$('#service-list li').show();
+		    	return this;
+		    }
+
+			this.instantSearch = function(input){
+
+				var _val = $(input).val();
+				this.reset();
+
+				//servers
+				for( var id in data.servers )
+					if(data.servers[id].name.substring(0,_val.length)!=_val)
+						$('#'+id).hide();
+					
+				//services
+				for( var id in data.services )
+					if(data.services[id].name.substring(0,_val.length)!=_val)
+						$('#'+id).hide();
+
+				return this;
+			}
+
+			this.nodeHtml = function(id){
+				var _el = $('<li id="'+id+'"></li>');
+				var _node = nodeFactory(_el);
+				var _name = data[_node.type+'s'][id].name;
+
+				_el.html(_name);
+				_el.attr('class', _node.type);
+				return _el;
+			}
+
+			var nodeFactory = function(el){
 				var _type = $(el).attr('id').split("-")[0];
 				return {
 					"type" : _type,
@@ -90,8 +124,7 @@
 
 	    //build server carousel
 		for(var id in data.servers)
-			serverHtml += '<li id="'+id+'">'+data.servers[id].name+'</li>';
-		$("#server-list ul").html(serverHtml);
+			$("#server-list ul").append(envDia.nodeHtml(id));
 		carouselServer.jcarousel('reload');
 	    $('.prev').jcarouselControl({
 	        target: '-=1',
@@ -104,9 +137,8 @@
 
 	    //build service carousel
 	    for (var id in data.services)
-		    serviceHtml += '<li id="'+id+'">'+data.services[id].name+'</li>';
+			$("#service-list ul").append(envDia.nodeHtml(id));
 			
-		$("#service-list ul").html(serviceHtml);
 		$('#service-list').jcarousel('reload');
 	    $('.prevService').jcarouselControl({
 	        target: '-=1',
@@ -124,9 +156,11 @@
 	    });
 
 	    //navigation
-	    $('.reset').click(function(){
-	    	$('#server-list li').show();
-	    	$('#service-list li').show();
+	    $('.reset').click(envDia.reset);
+
+	    //instant search
+	    $('#search-input').keyup(function(){
+	    	envDia.instantSearch($(this))
 	    });
 	});
 
@@ -136,20 +170,26 @@
 
 	<nav>		
 		<button class="reset">Reset</button><br/>
+		<label for="search-input">Search</label>
+		<input type="text" id="search-input"/>
 	</nav>
 
-	<button class="prev"><<</button>
-	<button class="next">>></button>		        
-	<div id="server-list">
-	    <ul>
-	    </ul>
+	<div id="server">
+		<button class="prev" style="float:left"><<</button>
+		<div id="server-list" style="float:left">
+		    <ul>
+		    </ul>
+		</div>
+		<button class="next" style="float:left">>></button>		        
 	</div>
 
-	<button class="prevService"><<</button>
-	<button class="nextService">>></button>		        
-	<div id="service-list">
-	    <ul>
-	    </ul>
+	<div id="service">
+		<button class="prevService" style="float:left"><<</button>
+		<div id="service-list" style="float:left">
+		    <ul>
+		    </ul>
+		</div>
+		<button class="nextService" style="float:left">>></button>		        
 	</div>
 </body>
 </html>
