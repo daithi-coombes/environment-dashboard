@@ -85,12 +85,12 @@
 
 				//servers
 				for( var id in data.servers )
-					if(data.servers[id].name.substring(0,_val.length)!=_val)
+					if(data.servers[id].name.substring(0,_val.length).toLowerCase()!=_val.toLowerCase())
 						$('#'+id).hide();
 					
 				//services
 				for( var id in data.services )
-					if(data.services[id].name.substring(0,_val.length)!=_val)
+					if(data.services[id].name.substring(0,_val.length).toLowerCase()!=_val.toLowerCase())
 						$('#'+id).hide();
 
 				return this;
