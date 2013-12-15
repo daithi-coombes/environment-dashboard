@@ -2,9 +2,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>An HTML5 Slideshow</title>
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.pack.js"></script>
-<!--<script type="text/javascript" src="js/jcarousellite_1.0.1.min.js"></script>-->
+<title>Environment Diagram</title>
+<script type="text/javascript" src="https://code.jquery.com/jquery-latest.pack.js"></script>
 <script type="text/javascript" src="js/jquery.jcarousel-core.min.js"></script>
 <script type="text/javascript" src="js/jquery.jcarousel-control.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css/styles.css" />
@@ -49,6 +48,9 @@
 				this.node = _node;
 				$('#search-input').val('');
 
+				carouselServer.jcarousel('scroll',0);
+				carouselService.jcarousel('scroll',0);
+				
 				//get new data
 				if(_node.type=='service')
 					_servers = data.services[_node.id].servers;
@@ -82,6 +84,10 @@
 
 				var _val = $(input).val();
 				this.reset();
+
+				//reset carousel index's
+				carouselServer.jcarousel('scroll',0);
+				carouselService.jcarousel('scroll',0);
 
 				//servers
 				for( var id in data.servers )
@@ -168,10 +174,18 @@
 </head>
 <body>
 
+	<div>
+		<h3>Environment Diagram</h3>
+		<p>Clicking an item on the diagram will only show items related to it,
+		eg: click a service and only the servers that have that service will
+		show in the list.</p>
+		<p>The search is also instant and in real-time</p>
+	</div>
+
 	<nav>		
-		<button class="reset">Reset</button><br/>
 		<label for="search-input">Search</label>
 		<input type="text" id="search-input"/>
+		<button class="reset">Reset</button>
 	</nav>
 
 	<div id="server">

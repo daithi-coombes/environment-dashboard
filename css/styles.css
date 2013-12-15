@@ -1,3 +1,11 @@
+nav{
+    width: 1000px;
+    clear: both;
+}
+nav *{
+    float:right;
+    margin-right: 50px;
+}
 #server, #service{
     width: 1000px;
     clear: both;
@@ -45,4 +53,9 @@ have a fixed width and height (but it's not required).
     height: 80px;
     margin: 5px;
     padding: 2px;
+    background: #c0c0c0;
+}
+#server-list li:hover, #service-list li:hover{
+    background: #eef;
+    cursor: pointer;
 }
