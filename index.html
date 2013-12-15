@@ -72,6 +72,27 @@
 				return this;
 			}
 
+			this.reset = function(){
+		    	$('#server-list li').show();
+		    	$('#service-list li').show();
+		    }
+
+			this.instantSearch = function(input){
+
+				var _val = $(input).val();
+				this.reset();
+
+				//servers
+				for( var id in data.servers )
+					if(data.servers[id].name.substring(0,_val.length)!=_val)
+						$('#'+id).hide();
+					
+				//services
+				for( var id in data.services )
+					if(data.services[id].name.substring(0,_val.length)!=_val)
+						$('#'+id).hide();
+			}
+
 			nodeFactory = function(el){
 				var _type = $(el).attr('id').split("-")[0];
 				return {
@@ -124,9 +145,11 @@
 	    });
 
 	    //navigation
-	    $('.reset').click(function(){
-	    	$('#server-list li').show();
-	    	$('#service-list li').show();
+	    $('.reset').click(envDia.reset);
+
+	    //instant search
+	    $('#search-input').keyup(function(){
+	    	envDia.instantSearch($(this))
 	    });
 	});
 
@@ -136,6 +159,8 @@
 
 	<nav>		
 		<button class="reset">Reset</button><br/>
+		<label for="search-input">Search</label>
+		<input type="text" id="search-input"/>
 	</nav>
 
 	<button class="prev"><<</button>
