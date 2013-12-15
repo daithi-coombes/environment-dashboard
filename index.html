@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>An HTML5 Slideshow</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.pack.js"></script>
+<!--<script type="text/javascript" src="js/jcarousellite_1.0.1.min.js"></script>-->
+<script type="text/javascript" src="js/jquery.jcarousel-core.min.js"></script>
+<script type="text/javascript" src="js/jquery.jcarousel-control.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/styles.css" />
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		var data = {
+			"servers" : {
+				"server-1" : {"name" : "Server 1", "services" : ["service-1","service-3","service-8"]},
+				"server-2" : {"name" : "Server 2", "services" : ["service-10"]},
+				"server-3" : {"name" : "Server 3", "services" : ["service-1","service-3","service-8"]},
+				"server-4" : {"name" : "Server 4", "services" : ["service-8","service-2","service-5"]},
+				"server-5" : {"name" : "Server 5", "services" : ["service-1","service-4"]},
+				"server-6" : {"name" : "Server 6", "services" : ["service-3","service-2","service-6"]},
+				"server-7" : {"name" : "Server 7", "services" : ["service-9","service-7","service-3"]},
+				"server-8" : {"name" : "Server 8", "services" : ["service-2","service-1"]},
+				"server-9" : {"name" : "Server 9", "services" : ["service-1","service-3"]},
+				"server-10" : {"name" : "Server 10", "services" : ["service-1"]}
+			},
+			"services" : {
+				"service-1" : {"name" : "Service 1", "servers" : ["server-1","server-3","server-5","server-9","server-8","server-10"]},
+				"service-2" : {"name" : "Service 2", "servers" : ["server-3","server-5","server-8"]},
+				"service-3" : {"name" : "Service 3", "servers" : ["server-1","server-3","server-6","server-9"]},
+				"service-4" : {"name" : "Service 4", "servers" : ["server-5"]},
+				"service-5" : {"name" : "Service 5", "servers" : ["server-4"]},
+				"service-6" : {"name" : "Service 6", "servers" : ["server-6"]},
+				"service-7" : {"name" : "Service 7", "servers" : ["server-7"]},
+				"service-8" : {"name" : "Service 8", "servers" : ["server-4"]},
+				"service-9" : {"name" : "Service 9", "servers" : []},
+				"service-10" : {"name" : "Service 10", "servers" : []}
+			}
+		}
+
+		var EnvironmentDiagram = function(){
+
+			this.node;
+			this.filter = function(el){
+
+				//vars
+				var _node = nodeFactory(el);
+				var _servers, _services = false;
+				this.node = _node;
+
+				//get new data
+				if(_node.type=='service')
+					_servers = data.services[_node.id].servers;
+				else if(_node.type=='server')
+					_services = data.servers[_node.id].services;
+				console.log(_servers);
+
+				//setting server carousel
+				if(_servers){
+					$('#server-list ul li').hide();
+					for( var i in _servers)
+						$('#'+_servers[i]).show();
+				}
+
+				//set service carousel
+				if(_services){
+					$('#service-list ul li').hide();
+					for( var i in _services)
+						$('#'+_services[i]).show();
+				}
+
+				return this;
+			}
+
+			nodeFactory = function(el){
+				var _type = $(el).attr('id').split("-")[0];
+				return {
+					"type" : _type,
+					"id" : $(el).attr('id'),
+					"el" : el
+				}
+			}
+		}
+		var envDia = new EnvironmentDiagram();
+
+		//construct carousel before adding items
+	    var carouselServer = $("#server-list").jcarousel();
+	    var carouselService = $("#service-list").jcarousel();
+	    var serverHtml, serviceHtml = '';
+
+	    //build server carousel
+		for(var id in data.servers)
+			serverHtml += '<li id="'+id+'">'+data.servers[id].name+'</li>';
+		$("#server-list ul").html(serverHtml);
+		carouselServer.jcarousel('reload');
+	    $('.prev').jcarouselControl({
+	        target: '-=1',
+	        carousel: carouselServer
+	    });
+	    $('.next').jcarouselControl({
+	        target: '+=1',
+	        carousel: carouselServer
+	    });
+
+	    //build service carousel
+	    for (var id in data.services)
+		    serviceHtml += '<li id="'+id+'">'+data.services[id].name+'</li>';
+			
+		$("#service-list ul").html(serviceHtml);
+		$('#service-list').jcarousel('reload');
+	    $('.prevService').jcarouselControl({
+	        target: '-=1',
+	        carousel: carouselService
+	    });
+	    $('.nextService').jcarouselControl({
+	        target: '+=1',
+	        carousel: carouselService
+	    });
+		carouselService.jcarousel('reload');
+
+		//item events
+	    $('#service-list li, #server-list li').click(function(){
+	    	envDia.filter(this);
+	    });
+
+	    //navigation
+	    $('.reset').click(function(){
+	    	$('#server-list li').show();
+	    	$('#service-list li').show();
+	    });
+	});
+
+</script>
+</head>
+<body>
+
+	<nav>		
+		<button class="reset">Reset</button><br/>
+	</nav>
+
+	<button class="prev"><<</button>
+	<button class="next">>></button>		        
+	<div id="server-list">
+	    <ul>
+	    </ul>
+	</div>
+
+	<button class="prevService"><<</button>
+	<button class="nextService">>></button>		        
+	<div id="service-list">
+	    <ul>
+	    </ul>
+	</div>
+</body>
+</html>
